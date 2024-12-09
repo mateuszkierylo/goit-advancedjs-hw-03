@@ -1,38 +1,61 @@
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
- export function createGallery(array) {
-    return array.map(item =>
-        `
-        <li class="gallery-item">
-       <a class="gallery-link" href="${item.largeImageURL}">
-          <img
-            class="gallery-image"
-            src = "${item.webformatURL}"
-            alt = "${item.tags}"
-            loading = "lazy"
-            width = "360"
-            />
+let galleryLightbox;
+
+function createCardsMarkup(cards) {
+  const cartItem = cards
+    .map(
+      ({
+        tags,
+        webformatURL,
+        largeImageURL,
+        likes,
+        views,
+        comments,
+        downloads,
+      }) => `
+      <li class="gallery-card">
+        <a class="gallery-link" href="${largeImageURL}">
+            <img class="gallery-img" src="${webformatURL}" alt="${tags}" />
+            <div class="values-container">
+                <ul class="labels">
+                    <li>Likes</li>
+                    <li>${likes}</li>
+                </ul>
+                <ul class="labels">
+                    <li>Views</li>
+                    <li>${views}</li>
+                </ul>
+                <ul class="labels">
+                    <li>Comments</li>
+                    <li>${comments}</li>
+                </ul>
+                <ul class="labels">
+                    <li>Downloads</li>
+                    <li>${downloads}</li>
+                </ul>
+            </div>
         </a>
+      </li>`
+    )
+    .join('');
 
-        <div class="info">
-                    <p class="info-item"><b>Likes ${item.likes}</b></p>
-                    <p class="info-item"><b>Views ${item.views}</b></p>
-                    <p class="info-item"><b>Comments ${item.comments}</b></p>
-                    <p class="info-item"><b>Downloads ${item.downloads}</b></p>
-                </div>
-
-      </li> `
-    ).join('');
-
+  loadSimpleLitebox(cartItem);
 }
 
+function loadSimpleLitebox(cartItem) {
+  const gallery = document.querySelector('ul.images-div');
+  gallery.innerHTML = cartItem;
 
-export const showLoader = () => {
-  const loader = document.querySelector('.loader');
-  loader.style.display = 'block';
-};
+  if (galleryLightbox) {
+    galleryLightbox.refresh();
+  } else {
+    galleryLightbox = new SimpleLightbox('.images-div a', {
+      captionsData: 'alt',
+      captionDelay: 250,
+    });
+  }
+}
 
-   export const hideLoader = () => {
-  const loader = document.querySelector('.loader');
-  loader.style.display = 'none';
-};
-    
+export { createCardsMarkup };

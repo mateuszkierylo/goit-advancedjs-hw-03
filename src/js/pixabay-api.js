@@ -1,28 +1,23 @@
+const API_KEY = '46726016-b290741f0a1b76ad16aa31499';
 
-const API_KEY = "47417442-8de2b86208b2757b72fdcd518";
+function getImg(searchValue) {
+  const searchParams = new URLSearchParams({
+    key: API_KEY,
+    q: searchValue,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: 'true',
+  });
 
-export function fetchImages(searchQuery) {
-    const params = new URLSearchParams({
-        key: API_KEY,
-        q: searchQuery,
-        image_type: "photo",
-        orientation: "horizontal",
-        safesearch: "true"
+  return fetch(`https://pixabay.com/api/?${searchParams.toString()}`).then(
+    res => {
+      if (!res.ok) {
+        throw new Error(res.status);
+      }
 
-    })
-
-    return fetch(`https://pixabay.com/api/?${params}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(response.statusText);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            return data.hits;
-        })
-        .catch(error => {
-            console.log(error);  
-            return [];  
-        });
+      return res.json();
+    }
+  );
 }
+
+export { getImg };
